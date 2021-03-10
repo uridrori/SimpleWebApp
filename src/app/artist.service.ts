@@ -1,3 +1,4 @@
+import { MessageService } from './message.service';
 import { ARTISTS } from './mock-artists';
 import { Artist } from './artist';
 import { Injectable } from '@angular/core';
@@ -8,10 +9,11 @@ import { Observable, of } from 'rxjs';
 })
 export class ArtistService {
 
-  constructor() { }
+  constructor(private messageService: MessageService) { }
 
   getArtists(): Observable<Artist[]> {
     const artists = of(ARTISTS);
+    this.messageService.add('ArtistService: fetched artists')
     return artists;
   }
 }
