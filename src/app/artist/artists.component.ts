@@ -10,10 +10,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./artists.component.css']
 })
 export class ArtistsComponent implements OnInit {
-  artists: Artist[] = [];
-  selectedArtist?: Artist;
-
-  constructor(private artistService: ArtistService, private messageService: MessageService) {
+  artists: Artist[];
+  constructor(private artistService: ArtistService) {
   }
 
   getArtists(): void {
@@ -24,10 +22,6 @@ export class ArtistsComponent implements OnInit {
   ngOnInit(): void {
     this.getArtists();
 
-  }
-  onSelect(artist: Artist): void {
-    this.selectedArtist = artist;
-    this.messageService.add(`ArtistsComponent: Selected artist id=${artist.id}`);
   }
 
 }

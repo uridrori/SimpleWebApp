@@ -16,4 +16,11 @@ export class ArtistService {
     this.messageService.add('ArtistService: fetched artists')
     return artists;
   }
+
+  getArtist(id: number): Observable<Artist> {
+    this.messageService.add(`ArtistService: fetched hero id=${id}`);
+    return of(ARTISTS.find(artist => artist.id === id));
+  }
+
+
 }
