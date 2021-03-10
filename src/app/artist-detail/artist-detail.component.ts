@@ -28,7 +28,7 @@ export class ArtistDetailComponent implements OnInit {
     this.artistService.getArtist(id)
       .subscribe(artist => this.artist = artist);
   }
-
+ 
   goBack(): void {
     this.location.back();
   }
