@@ -11,6 +11,9 @@ import { catchError, map, tap } from 'rxjs/operators';
 })
 export class ArtistService {
   private artistsUrl = 'api/artists';
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
 
   constructor(private messageService: MessageService, private http: HttpClient) { }
 
@@ -23,8 +26,49 @@ export class ArtistService {
   }
 
   getArtist(id: number): Observable<Artist> {
-    this.messageService.add(`ArtistService: fetched artist id=${id}`);
-    return of(ARTISTS.find(artist => artist.id === id));
+    const url = `${this.artistsUrl}/${id}`;
+    return this.http.get<Artist>(url).pipe(
+      tap(_ => this.log(`fetched artist id=${id}`)),
+      catchError(this.handleError<Artist>(`getArtist id=${id}`))
+    );
+  }
+
+  updateArtist(artist: Artist): Observable<any> {
+    return this.http.put(this.artistsUrl, artist, this.httpOptions).pipe(
+      tap(_ => this.log(`updated artist id=${artist.id}`)),
+      catchError(this.handleError<any>('updateArtist'))
+    );
+  }
+
+
+  addArtist(artist: Artist): Observable<Artist> {
+    return this.http.post<Artist>(this.artistsUrl, artist, this.httpOptions).pipe(
+      tap((newArtist: Artist) => this.log(`added artist w/ id=${newArtist.id}`)),
+      catchError(this.handleError<Artist>('addArtist'))
+    );
+  }
+
+
+  deleteArtist(artist: Artist | number): Observable<Artist> {
+    const id = typeof artist === 'number' ? artist : artist.id;
+    const url = `${this.artistsUrl}/${id}`;
+
+    return this.http.delete<Artist>(url, this.httpOptions).pipe(
+      tap(_ => this.log(`deleted artist id=${id}`)),
+      catchError(this.handleError<Artist>('deleteArtist'))
+    );
+  }
+
+  searchArtists(term: string): Observable<Artist[]> {
+    if (!term.trim()) {
+      return of([]);
+    }
+    return this.http.get<Artist[]>(`${this.artistsUrl}/?name=${term}`).pipe(
+      tap(x => x.length ?
+        this.log(`found artists matching "${term}"`) :
+        this.log(`no artists matching "${term}"`)),
+      catchError(this.handleError<Artist[]>('searchArtists', []))
+    );
   }
 
   private log(message: string) {
@@ -38,6 +82,8 @@ export class ArtistService {
       return of(result as T);
     };
   }
+
+
 
 
 }

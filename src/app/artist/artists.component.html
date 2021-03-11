@@ -1,8 +1,16 @@
 <h2>My Artists</h2>
+<div>
+  <label id="new-artist">Artist name: </label>
+  <input for="new-artist" #artistName />
+  <button class="add-button" (click)="add(artistName.value); artistName.value=''">
+    Add artist
+  </button>
+</div>
 <ul class="artists">
   <li *ngFor="let artist of artists">
     <a routerLink="/detail/{{artist.id}}">
       <span class="badge">{{artist.id}}</span> {{artist.name}}
+      <button class="delete" title="delete artist" (click)="delete(artist)">x</button>
     </a>
   </li>
 </ul>

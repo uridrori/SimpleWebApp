@@ -33,4 +33,9 @@ export class ArtistDetailComponent implements OnInit {
     this.location.back();
   }
 
+  save(): void {
+    this.artistService.updateArtist(this.artist)
+      .subscribe(() => this.goBack());
+  }
+
 }
