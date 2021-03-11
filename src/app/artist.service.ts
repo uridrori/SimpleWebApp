@@ -4,6 +4,7 @@ import { Artist } from './artist';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class ArtistService {
 
   getArtists(): Observable<Artist[]> {
     return this.http.get<Artist[]>(this.artistsUrl)
+      .pipe(
+        tap(_ => this.log('fetched artists')),
+        catchError(this.handleError<Artist[]>('getArtists', []))
+      );
   }
 
   getArtist(id: number): Observable<Artist> {
@@ -24,6 +29,14 @@ export class ArtistService {
 
   private log(message: string) {
     this.messageService.add(`ArtistService: ${message}`);
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      this.log(`${operation} failed: ${error.message}`);
+      return of(result as T);
+    };
   }
 
 
